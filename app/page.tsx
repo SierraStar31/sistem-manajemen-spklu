@@ -207,7 +207,7 @@ export default function HomePage() {
                   >
                     {item.label}
                   </a>
-                )
+                ),
               )}
               {/* Sliding indicator */}
               <span
@@ -311,7 +311,7 @@ export default function HomePage() {
                 onClick={() => handleFilterChange(filter)}
                 className={`relative px-6 py-2.5 rounded-2xl text-sm font-semibold transition-all duration-300 backdrop-blur-xl ${
                   activeFilter === filter
-                    ? "bg-slate-900 text-white shadow-xl shadow-slate-900/20 scale-[1.02] border border-slate-700"
+                    ? "bg-emerald-500 text-white shadow-xl shadow-emerald-500/25 scale-[1.02] border border-emerald-400/40 hover:bg-emerald-600"
                     : "bg-white/60 text-slate-500 border border-slate-200 hover:border-slate-300 hover:text-slate-700 hover:shadow-lg hover:shadow-slate-200/50 hover:scale-[1.01] hover:bg-white/80"
                 }`}
               >
@@ -484,7 +484,9 @@ export default function HomePage() {
                   <p className="text-xs text-slate-400 font-medium mb-1.5">
                     {stat.label}
                   </p>
-                  <p className={`text-2xl font-bold tracking-tight ${stat.color}`}>
+                  <p
+                    className={`text-2xl font-bold tracking-tight ${stat.color}`}
+                  >
                     {stat.value}
                     <span className="text-sm font-medium text-slate-400 ml-0.5">
                       {stat.suffix}

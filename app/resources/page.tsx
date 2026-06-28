@@ -296,7 +296,7 @@ export default function ResourcesPage() {
       {/* ═══════════════════════ CONTENT ═══════════════════════ */}
       <section className="relative py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-20">
         {/* ─── About Us ─── */}
-        <div id="about" className="bg-white/60 backdrop-blur-xl rounded-[2rem] p-10 shadow-[0_8px_40px_-8px_rgba(0,0,0,0.08)] border border-slate-200/60 space-y-7 text-center flex flex-col items-center">
+        <div id="about" className="bg-white rounded-[2rem] p-10 shadow-[0_8px_40px_-8px_rgba(0,0,0,0.08)] border border-slate-200/60 space-y-7 text-center flex flex-col items-center">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50/80 text-emerald-600 text-xs font-semibold tracking-wide uppercase">
             <IconInfoCircle className="w-3.5 h-3.5" />
             Tentang Kami
@@ -330,12 +330,12 @@ export default function ResourcesPage() {
           </div>
 
           <Tabs defaultValue="ccs2" className="w-full max-w-3xl mx-auto">
-            <TabsList className="flex w-full bg-white/60 backdrop-blur-xl p-1.5 rounded-2xl h-14 border border-slate-200/60 shadow-sm gap-1.5">
+            <TabsList className="flex w-full bg-slate-50 p-1.5 rounded-2xl h-14 border border-slate-200/60 shadow-sm gap-1.5">
               {connectorData.map((c) => (
                 <TabsTrigger
                   key={c.value}
                   value={c.value}
-                  className="flex-1 rounded-xl text-sm font-semibold data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-slate-900/10 transition-all duration-300"
+                  className="flex-1 rounded-xl text-sm font-semibold data-[state=active]:bg-emerald-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-500/25 data-[state=active]:pointer-events-none hover:bg-slate-100 transition-all duration-300"
                 >
                   {c.name}
                 </TabsTrigger>
@@ -344,7 +344,7 @@ export default function ResourcesPage() {
 
             {connectorData.map((c) => (
               <TabsContent key={c.value} value={c.value} className="mt-6 m-0">
-                <div className="bg-white/60 backdrop-blur-xl rounded-[2rem] p-8 sm:p-10 shadow-[0_8px_40px_-8px_rgba(0,0,0,0.08)] border border-slate-200/60 flex flex-col items-center">
+                <div className="bg-white rounded-[2rem] p-8 sm:p-10 shadow-[0_8px_40px_-8px_rgba(0,0,0,0.08)] border border-slate-200/60 flex flex-col items-center">
                   <div className="flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
                     <div className="flex-shrink-0 w-32 h-32 rounded-[1.5rem] bg-emerald-50 overflow-hidden flex items-center justify-center shadow-lg shadow-emerald-500/10 border-2 border-emerald-200/60">
                       <Image
@@ -392,7 +392,7 @@ export default function ResourcesPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* FAQ */}
-            <div className="bg-white/60 backdrop-blur-xl rounded-[2rem] p-10 shadow-[0_8px_40px_-8px_rgba(0,0,0,0.08)] border border-slate-200/60">
+            <div className="bg-white rounded-[2rem] p-10 shadow-[0_8px_40px_-8px_rgba(0,0,0,0.08)] border border-slate-200/60">
               <div className="flex items-center gap-3 mb-8">
                 <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 text-emerald-600 shadow-sm">
                   <IconHelp className="w-5 h-5" strokeWidth={1.5} />
@@ -422,7 +422,7 @@ export default function ResourcesPage() {
             </div>
 
             {/* Submit Ticket */}
-            <div className="bg-white/60 backdrop-blur-xl rounded-[2rem] p-10 shadow-[0_8px_40px_-8px_rgba(0,0,0,0.08)] border border-slate-200/60">
+            <div className="bg-white rounded-[2rem] p-10 shadow-[0_8px_40px_-8px_rgba(0,0,0,0.08)] border border-slate-200/60">
               <div className="flex items-center gap-3 mb-8">
                 <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 text-emerald-600 shadow-sm">
                   <IconSend className="w-5 h-5" strokeWidth={1.5} />
