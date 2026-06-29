@@ -11,12 +11,14 @@ import {
   IconReportMoney,
   IconUser,
   IconLogout,
+  IconHistory,
 } from "@tabler/icons-react";
 import { Badge } from "@/app/components/ui/badge";
 
 const sidebarMenu = [
   { label: "Dashboard", href: "/admin/dashboard", icon: IconDashboard },
   { label: "Stasiun", href: "/admin/stasiun", icon: IconBuilding },
+  { label: "Transaksi", href: "/admin/transaksi", icon: IconHistory },
   { label: "Override", href: "/admin/override", icon: IconTool },
   { label: "Keuangan", href: "/admin/keuangan", icon: IconReportMoney },
 ];

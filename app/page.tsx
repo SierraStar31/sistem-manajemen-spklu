@@ -19,14 +19,39 @@ import {
 } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 
+const defaultStations = [
+  { id: "SPK-001", location: "BSB Center, Balikpapan", connectorType: "CCS2", status: "Aktif" },
+  { id: "SPK-002", location: "RBS Plaza, Balikpapan", connectorType: "CHAdeMO", status: "Aktif" },
+  { id: "SPK-003", location: "Balikpapan Superblock", connectorType: "AC Type 2", status: "Maintenance" },
+  { id: "SPK-004", location: "Terminal Klandasan", connectorType: "CCS2", status: "Aktif" },
+  { id: "SPK-005", location: "E-Walk Balikpapan", connectorType: "CCS2", status: "Offline" },
+];
+
+function getStationsFromStorage() {
+  if (typeof window === "undefined") return defaultStations;
+  const stored = localStorage.getItem("neoncharge_stations");
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } catch {}
+  }
+  return defaultStations;
+}
+
 const fetchStationStatus = async () => {
   await new Promise((resolve) => setTimeout(resolve, 1200));
+  const stations = getStationsFromStorage();
+  const available = stations.filter((s: { status: string }) => s.status === "Aktif").length;
+  const maintenance = stations.filter((s: { status: string }) => s.status === "Maintenance").length;
+  const offline = stations.filter((s: { status: string }) => s.status === "Offline").length;
   return {
-    totalLocations: 5,
-    totalMachines: 10,
-    available: 7,
-    inUse: 2,
-    maintenance: 1,
+    totalLocations: stations.length,
+    totalMachines: stations.length,
+    available,
+    inUse: 0,
+    maintenance,
+    offline,
     uptime: 98.5,
     energyDelivered: 342,
     co2Saved: 89,
@@ -431,7 +456,7 @@ export default function HomePage() {
           </div>
 
           {/* Main Status Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
             {isLoading
               ? Array.from({ length: 3 }).map((_, i) => (
                   <Card
@@ -467,6 +492,12 @@ export default function HomePage() {
                     color: "amber",
                     icon: "🔧",
                   },
+                  {
+                    label: "Offline",
+                    value: data?.offline,
+                    color: "red",
+                    icon: "⛔",
+                  },
                 ].map((item, i) => (
                   <Card
                     key={i}
@@ -487,7 +518,9 @@ export default function HomePage() {
                             ? "bg-gradient-to-br from-emerald-500 to-emerald-600 bg-clip-text text-transparent"
                             : item.color === "amber"
                               ? "bg-gradient-to-br from-amber-500 to-amber-600 bg-clip-text text-transparent"
-                              : "bg-gradient-to-br from-slate-700 to-slate-900 bg-clip-text text-transparent"
+                              : item.color === "red"
+                                ? "bg-gradient-to-br from-red-500 to-red-600 bg-clip-text text-transparent"
+                                : "bg-gradient-to-br from-slate-700 to-slate-900 bg-clip-text text-transparent"
                         }`}
                       >
                         {item.value}
@@ -499,7 +532,9 @@ export default function HomePage() {
                               ? "from-emerald-400 to-emerald-500"
                               : item.color === "amber"
                                 ? "from-amber-400 to-amber-500"
-                                : "from-slate-400 to-slate-500"
+                                : item.color === "red"
+                                  ? "from-red-400 to-red-500"
+                                  : "from-slate-400 to-slate-500"
                           }`}
                           style={{
                             width: `${Math.min((item.value! / 200) * 100, 100)}%`,

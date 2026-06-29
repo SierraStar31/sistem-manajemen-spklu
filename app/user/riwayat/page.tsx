@@ -20,24 +20,137 @@ interface Transaction {
   date: string;
   rawDate: string;
   location: string;
+  user: string;
   kwh: number;
   price: string;
   status: "Selesai" | "Proses" | "Dibatalkan";
 }
 
-const andiTransactions: Transaction[] = [
-  { id: "TXN-001", date: "25 Jun 2026, 14:30", rawDate: "2026-06-25", location: "SPKLU BSB Center", kwh: 32.5, price: "Rp 65.000", status: "Selesai" },
-  { id: "TXN-002", date: "22 Jun 2026, 09:15", rawDate: "2026-06-22", location: "SPKLU RBS Plaza", kwh: 18.2, price: "Rp 36.400", status: "Selesai" },
-  { id: "TXN-003", date: "20 Jun 2026, 16:45", rawDate: "2026-06-20", location: "SPKLU Balikpapan Superblock", kwh: 45.0, price: "Rp 90.000", status: "Proses" },
-  { id: "TXN-004", date: "15 Mei 2026, 10:20", rawDate: "2026-05-15", location: "SPKLU Terminal Klandasan", kwh: 28.0, price: "Rp 56.000", status: "Selesai" },
-  { id: "TXN-005", date: "08 Mei 2026, 13:00", rawDate: "2026-05-08", location: "SPKLU BSB Center", kwh: 41.3, price: "Rp 82.600", status: "Selesai" },
-  { id: "TXN-006", date: "01 Apr 2026, 08:30", rawDate: "2026-04-01", location: "SPKLU RBS Plaza", kwh: 22.0, price: "Rp 44.000", status: "Selesai" },
+const stationTotals = [
+  { name: "BSB Center", totalKwh: 400.2, totalRevenue: 4357500, totalTx: 95 },
+  { name: "RBS Plaza", totalKwh: 274.8, totalRevenue: 2985000, totalTx: 65 },
+  { name: "Balikpapan Superblock", totalKwh: 177.4, totalRevenue: 1497000, totalTx: 42 },
+  { name: "Terminal Klandasan", totalKwh: 329.0, totalRevenue: 2612500, totalTx: 78 },
+  { name: "E-Walk Balikpapan", totalKwh: 65.6, totalRevenue: 998000, totalTx: 32 },
 ];
 
-const fetchTransactions = async (userType: string): Promise<Transaction[]> => {
+const pricePerKwh = 2000;
+const users = ["Andi Pratama", "Budi Santoso", "Sari Dewi", "Rizky Firmansyah", "Dian Permata", "Fajar Nugroho", "Lestari Budiman", "Maya Putri", "Dedi Kurniawan"];
+
+const datePool: { raw: string; display: string }[] = [];
+const monthDefs = [
+  { m: "01", name: "Januari", days: 28 },
+  { m: "02", name: "Februari", days: 28 },
+  { m: "03", name: "Maret", days: 31 },
+  { m: "04", name: "April", days: 30 },
+  { m: "05", name: "Mei", days: 31 },
+  { m: "06", name: "Juni", days: 29 },
+];
+const times = ["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "18:00"];
+
+monthDefs.forEach(({ m, name, days }) => {
+  for (let d = 1; d <= days; d++) {
+    const dd = String(d).padStart(2, "0");
+    times.forEach((t) => {
+      datePool.push({ raw: `2026-${m}-${dd}`, display: `${d} ${name} 2026, ${t}` });
+    });
+  }
+});
+
+function generateAllTransactions(): Transaction[] {
+  const txs: Transaction[] = [];
+  let id = 1;
+
+  stationTotals.forEach((station, stationIdx) => {
+    const avgKwh = station.totalKwh / station.totalTx;
+    const numSelesai = Math.floor(station.totalTx * 0.85);
+    const numDibatalkan = Math.floor(station.totalTx * 0.08);
+    const numProses = station.totalTx - numSelesai - numDibatalkan;
+
+    let remainingKwh = station.totalKwh;
+    let remainingRevenue = station.totalRevenue;
+
+    for (let i = 0; i < numSelesai; i++) {
+      const isLast = i === numSelesai - 1;
+      const pseudoRandom = ((i * 7 + stationIdx * 13) % 10) / 10;
+      const kwh = isLast ? Math.round(remainingKwh * 10) / 10 : Math.round((avgKwh * (0.5 + pseudoRandom)) * 10) / 10;
+      const actualKwh = isLast ? remainingKwh : Math.min(kwh, remainingKwh);
+      const price = Math.round(actualKwh * pricePerKwh);
+      const actualPrice = isLast ? remainingRevenue : Math.min(price, remainingRevenue);
+      remainingKwh = Math.round((remainingKwh - actualKwh) * 10) / 10;
+      remainingRevenue -= actualPrice;
+
+      const monthIdx = id % 6;
+      const dayInMonth = (id * 3 + stationIdx * 7) % monthDefs[monthIdx].days + 1;
+      const picked = datePool.find((d) => {
+        const parts = d.raw.split("-");
+        return parseInt(parts[1]) === monthIdx + 1 && parseInt(parts[2]) === dayInMonth;
+      }) || datePool[id % datePool.length];
+
+      txs.push({
+        id: `TXN-${String(id).padStart(3, "0")}`,
+        date: picked.display,
+        rawDate: picked.raw,
+        location: `SPKLU ${station.name}`,
+        user: users[id % users.length],
+        kwh: Math.round(actualKwh * 10) / 10,
+        price: `Rp ${actualPrice.toLocaleString("id-ID")}`,
+        status: "Selesai",
+      });
+      id++;
+    }
+
+    for (let i = 0; i < numDibatalkan; i++) {
+      const monthIdx = id % 6;
+      const dayInMonth = (id * 3 + stationIdx * 7) % monthDefs[monthIdx].days + 1;
+      const picked = datePool.find((d) => {
+        const parts = d.raw.split("-");
+        return parseInt(parts[1]) === monthIdx + 1 && parseInt(parts[2]) === dayInMonth;
+      }) || datePool[id % datePool.length];
+      txs.push({
+        id: `TXN-${String(id).padStart(3, "0")}`,
+        date: picked.display,
+        rawDate: picked.raw,
+        location: `SPKLU ${station.name}`,
+        user: users[id % users.length],
+        kwh: 0,
+        price: "Rp 0",
+        status: "Dibatalkan",
+      });
+      id++;
+    }
+
+    for (let i = 0; i < numProses; i++) {
+      const monthIdx = id % 6;
+      const dayInMonth = (id * 3 + stationIdx * 7) % monthDefs[monthIdx].days + 1;
+      const picked = datePool.find((d) => {
+        const parts = d.raw.split("-");
+        return parseInt(parts[1]) === monthIdx + 1 && parseInt(parts[2]) === dayInMonth;
+      }) || datePool[id % datePool.length];
+      const kwh = Math.round(avgKwh * 0.5 * 10) / 10;
+      txs.push({
+        id: `TXN-${String(id).padStart(3, "0")}`,
+        date: picked.display,
+        rawDate: picked.raw,
+        location: `SPKLU ${station.name}`,
+        user: users[id % users.length],
+        kwh,
+        price: `Rp ${(kwh * pricePerKwh).toLocaleString("id-ID")}`,
+        status: "Proses",
+      });
+      id++;
+    }
+  });
+
+  return txs.sort((a, b) => b.rawDate.localeCompare(a.rawDate) || b.id.localeCompare(a.id));
+}
+
+const allGeneratedTransactions = generateAllTransactions();
+
+const fetchTransactions = async (userName: string): Promise<Transaction[]> => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  if (userType === "signin") return andiTransactions;
-  return [];
+  if (!userName) return [];
+  return allGeneratedTransactions.filter((tx) => tx.user === userName);
 };
 
 const months = [
@@ -52,7 +165,7 @@ const statusVariant: Record<string, "default" | "secondary" | "destructive" | "o
 };
 
 export default function RiwayatPage() {
-  const [userType, setUserType] = useState("signup");
+  const [userName, setUserName] = useState("");
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
@@ -60,13 +173,14 @@ export default function RiwayatPage() {
     const stored = localStorage.getItem("neoncharge_user");
     if (stored) {
       const parsed = JSON.parse(stored);
-      setUserType(parsed.type || "signup");
+      setUserName(parsed.nama || "");
     }
   }, []);
 
   const { data: transactions, isLoading } = useQuery({
-    queryKey: ["transactions", userType],
-    queryFn: () => fetchTransactions(userType),
+    queryKey: ["transactions", userName],
+    queryFn: () => fetchTransactions(userName),
+    enabled: !!userName,
   });
 
   const filteredTransactions = transactions?.filter((txn) => {
@@ -142,7 +256,7 @@ export default function RiwayatPage() {
               <p className="text-xs text-slate-400 mt-1">Coba pilih bulan atau tahun yang lain</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto max-h-[500px] overflow-y-auto">
               <Table>
                 <TableHeader>
                   <TableRow className="border-slate-200/60">

@@ -26,6 +26,7 @@ const stations = [
   { name: "SPKLU RBS Plaza - CHAdeMO", available: true, power: "100 kW" },
   { name: "SPKLU Balikpapan Superblock - AC Type 2", available: false, power: "22 kW" },
   { name: "SPKLU Terminal Klandasan - CCS2", available: true, power: "150 kW" },
+  { name: "SPKLU E-Walk Balikpapan - CCS2", available: false, power: "150 kW" },
 ];
 
 const timeSlots = [
