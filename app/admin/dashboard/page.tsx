@@ -86,7 +86,7 @@ export default function AdminDashboardPage() {
   return (
     <>
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Pusat Kendali Admin</h1>
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">Pusat Kendali Admin</h1>
         <p className="mt-1 text-sm text-slate-400">Kelola seluruh operasional SPKLU NeonCharge.</p>
       </div>
 

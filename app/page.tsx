@@ -222,7 +222,7 @@ export default function HomePage() {
 
             {/* CTA */}
             <Link href="/login">
-              <Button className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-xl px-5 h-9 text-[13px] font-semibold shadow-lg shadow-emerald-500/20 transition-all duration-200 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] border border-emerald-400/40">
+              <Button className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:bg-transparent hover:from-emerald-600 hover:to-emerald-700 text-white rounded-xl px-5 h-9 text-[13px] font-semibold shadow-lg shadow-emerald-500/20 transition-all duration-200 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] border border-emerald-400/40">
                 Sign Up / Log In
               </Button>
             </Link>

@@ -281,13 +281,13 @@ export default function ResourcesPage() {
             </span>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-[-0.03em] leading-[1.1]">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-[-0.03em] leading-[1.1]">
             <span className="bg-gradient-to-r from-emerald-500 via-teal-300 via-50% to-emerald-500 bg-clip-text text-transparent animate-shimmer">
               Pusat Panduan & Bantuan
             </span>
           </h1>
 
-          <p className="text-lg text-slate-400 max-w-xl mx-auto leading-relaxed font-light">
+          <p className="text-base sm:text-lg text-slate-400 max-w-xl mx-auto leading-relaxed font-light">
             Semua informasi yang Anda butuhkan tentang layanan NeonCharge.
           </p>
         </div>
@@ -296,7 +296,7 @@ export default function ResourcesPage() {
       {/* ═══════════════════════ CONTENT ═══════════════════════ */}
       <section className="relative py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-20">
         {/* ─── About Us ─── */}
-        <div id="about" className="bg-white rounded-[2rem] p-10 shadow-[0_8px_40px_-8px_rgba(0,0,0,0.08)] border border-slate-200/60 space-y-7 text-center flex flex-col items-center">
+        <div id="about" className="bg-white rounded-[2rem] p-6 sm:p-10 shadow-[0_8px_40px_-8px_rgba(0,0,0,0.08)] border border-slate-200/60 space-y-7 text-center flex flex-col items-center">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50/80 text-emerald-600 text-xs font-semibold tracking-wide uppercase">
             <IconInfoCircle className="w-3.5 h-3.5" />
             Tentang Kami
@@ -392,8 +392,8 @@ export default function ResourcesPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* FAQ */}
-            <div className="bg-white rounded-[2rem] p-10 shadow-[0_8px_40px_-8px_rgba(0,0,0,0.08)] border border-slate-200/60">
-              <div className="flex items-center gap-3 mb-8">
+            <div className="bg-white rounded-[2rem] p-6 sm:p-10 shadow-[0_8px_40px_-8px_rgba(0,0,0,0.08)] border border-slate-200/60">
+              <div className="flex items-center gap-3 mb-6 sm:mb-8">
                 <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 text-emerald-600 shadow-sm">
                   <IconHelp className="w-5 h-5" strokeWidth={1.5} />
                 </div>
@@ -422,8 +422,8 @@ export default function ResourcesPage() {
             </div>
 
             {/* Submit Ticket */}
-            <div className="bg-white rounded-[2rem] p-10 shadow-[0_8px_40px_-8px_rgba(0,0,0,0.08)] border border-slate-200/60">
-              <div className="flex items-center gap-3 mb-8">
+            <div className="bg-white rounded-[2rem] p-6 sm:p-10 shadow-[0_8px_40px_-8px_rgba(0,0,0,0.08)] border border-slate-200/60">
+              <div className="flex items-center gap-3 mb-6 sm:mb-8">
                 <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 text-emerald-600 shadow-sm">
                   <IconSend className="w-5 h-5" strokeWidth={1.5} />
                 </div>

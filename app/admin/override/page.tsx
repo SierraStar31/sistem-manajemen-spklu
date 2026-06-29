@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { useState, useEffect, useRef } from "react";
 import { IconTool } from "@tabler/icons-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/app/components/ui/card";
 import { Button } from "@/app/components/ui/button";
@@ -15,26 +13,44 @@ interface Machine {
   isOn: boolean;
 }
 
-const fetchMachines = async (): Promise<Machine[]> => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  return [
-    { id: "MES-001", name: "Mesin CCS2 #1", location: "BSB Center", isOn: true },
-    { id: "MES-002", name: "Mesin CHAdeMO #1", location: "RBS Plaza", isOn: true },
-    { id: "MES-003", name: "Mesin AC Type 2 #1", location: "Balikpapan Superblock", isOn: false },
-  ];
-};
+const initialMachines: Machine[] = [
+  { id: "MES-001", name: "Mesin CCS2 #1", location: "BSB Center", isOn: true },
+  { id: "MES-002", name: "Mesin CHAdeMO #1", location: "RBS Plaza", isOn: true },
+  { id: "MES-003", name: "Mesin AC Type 2 #1", location: "Balikpapan Superblock", isOn: false },
+];
+
+function getStoredMachines(): Machine[] | null {
+  if (typeof window === "undefined") return null;
+  const stored = localStorage.getItem("neoncharge_machines_override");
+  if (stored) {
+    try {
+      return JSON.parse(stored);
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
 
 export default function OverridePage() {
-  const [machines, setMachines] = useState<Machine[]>([]);
+  const [machines, setMachines] = useState<Machine[]>(initialMachines);
+  const initialized = useRef(false);
 
-  const { isLoading } = useQuery({
-    queryKey: ["machines"],
-    queryFn: async () => {
-      const data = await fetchMachines();
-      setMachines(data);
-      return data;
-    },
-  });
+  useEffect(() => {
+    if (!initialized.current) {
+      const stored = getStoredMachines();
+      if (stored) {
+        setMachines(stored);
+      }
+      initialized.current = true;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (initialized.current && machines.length > 0) {
+      localStorage.setItem("neoncharge_machines_override", JSON.stringify(machines));
+    }
+  }, [machines]);
 
   const toggleMachine = (id: string) => {
     setMachines((prev) =>
@@ -48,18 +64,10 @@ export default function OverridePage() {
     );
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-200 border-t-emerald-500" />
-      </div>
-    );
-  }
-
   return (
     <>
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Manual Override</h1>
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">Manual Override</h1>
         <p className="mt-1 text-sm text-slate-400">Kontrol langsung status mesin SPKLU.</p>
       </div>
 

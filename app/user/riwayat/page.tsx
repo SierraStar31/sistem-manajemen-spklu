@@ -79,7 +79,7 @@ export default function RiwayatPage() {
   return (
     <>
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Riwayat Transaksi</h1>
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">Riwayat Transaksi</h1>
         <p className="mt-1 text-sm text-slate-400">Daftar pengisian daya terakhir Anda.</p>
       </div>
 
@@ -142,30 +142,32 @@ export default function RiwayatPage() {
               <p className="text-xs text-slate-400 mt-1">Coba pilih bulan atau tahun yang lain</p>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow className="border-slate-200/60">
-                  <TableHead className="text-slate-500">Tanggal</TableHead>
-                  <TableHead className="text-slate-500">Lokasi</TableHead>
-                  <TableHead className="text-right text-slate-500">Energi (kWh)</TableHead>
-                  <TableHead className="text-right text-slate-500">Total Biaya</TableHead>
-                  <TableHead className="text-slate-500">Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredTransactions?.map((txn) => (
-                  <TableRow key={txn.id} className="border-slate-200/40">
-                    <TableCell className="font-medium">{txn.date}</TableCell>
-                    <TableCell>{txn.location}</TableCell>
-                    <TableCell className="text-right">{txn.kwh}</TableCell>
-                    <TableCell className="text-right font-medium">{txn.price}</TableCell>
-                    <TableCell>
-                      <Badge variant={statusVariant[txn.status]}>{txn.status}</Badge>
-                    </TableCell>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-slate-200/60">
+                    <TableHead className="text-slate-500">Tanggal</TableHead>
+                    <TableHead className="text-slate-500">Lokasi</TableHead>
+                    <TableHead className="text-right text-slate-500">Energi (kWh)</TableHead>
+                    <TableHead className="text-right text-slate-500">Total Biaya</TableHead>
+                    <TableHead className="text-slate-500">Status</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {filteredTransactions?.map((txn) => (
+                    <TableRow key={txn.id} className="border-slate-200/40">
+                      <TableCell className="font-medium whitespace-nowrap">{txn.date}</TableCell>
+                      <TableCell className="whitespace-nowrap">{txn.location}</TableCell>
+                      <TableCell className="text-right">{txn.kwh}</TableCell>
+                      <TableCell className="text-right font-medium">{txn.price}</TableCell>
+                      <TableCell>
+                        <Badge variant={statusVariant[txn.status]}>{txn.status}</Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>

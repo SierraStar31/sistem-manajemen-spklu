@@ -48,12 +48,12 @@ export default function StasiunPage() {
   return (
     <>
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Manajemen Stasiun</h1>
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">Manajemen Stasiun</h1>
         <p className="mt-1 text-sm text-slate-400">Kelola data stasiun pengisian daya.</p>
       </div>
 
       <Card className="border border-white/60 bg-white/60 backdrop-blur-xl rounded-[1.5rem] shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] overflow-hidden">
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-lg shadow-emerald-500/20">
               <IconBuilding className="h-5 w-5 text-white" />
@@ -70,39 +70,41 @@ export default function StasiunPage() {
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-200 border-t-emerald-500" />
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow className="border-slate-200/60">
-                  <TableHead className="text-slate-500">ID Stasiun</TableHead>
-                  <TableHead className="text-slate-500">Lokasi</TableHead>
-                  <TableHead className="text-slate-500">Tipe Konektor</TableHead>
-                  <TableHead className="text-slate-500">Status</TableHead>
-                  <TableHead className="text-right text-slate-500">Aksi</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {stations?.map((station) => (
-                  <TableRow key={station.id} className="border-slate-200/40">
-                    <TableCell className="font-mono font-medium">{station.id}</TableCell>
-                    <TableCell>{station.location}</TableCell>
-                    <TableCell>{station.connectorType}</TableCell>
-                    <TableCell>
-                      <Badge variant={statusVariant[station.status]}>{station.status}</Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button className="rounded-xl p-2 text-slate-400 transition-all duration-300 hover:bg-emerald-50 hover:text-emerald-600">
-                          <IconEdit className="h-4 w-4" />
-                        </button>
-                        <button className="rounded-xl p-2 text-slate-400 transition-all duration-300 hover:bg-red-50 hover:text-red-500">
-                          <IconTrash className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </TableCell>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-slate-200/60">
+                    <TableHead className="text-slate-500">ID Stasiun</TableHead>
+                    <TableHead className="text-slate-500">Lokasi</TableHead>
+                    <TableHead className="text-slate-500">Tipe Konektor</TableHead>
+                    <TableHead className="text-slate-500">Status</TableHead>
+                    <TableHead className="text-right text-slate-500">Aksi</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {stations?.map((station) => (
+                    <TableRow key={station.id} className="border-slate-200/40">
+                      <TableCell className="font-mono font-medium whitespace-nowrap">{station.id}</TableCell>
+                      <TableCell className="whitespace-nowrap">{station.location}</TableCell>
+                      <TableCell className="whitespace-nowrap">{station.connectorType}</TableCell>
+                      <TableCell>
+                        <Badge variant={statusVariant[station.status]}>{station.status}</Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <button className="rounded-xl p-2 text-slate-400 transition-all duration-300 hover:bg-emerald-50 hover:text-emerald-600">
+                            <IconEdit className="h-4 w-4" />
+                          </button>
+                          <button className="rounded-xl p-2 text-slate-400 transition-all duration-300 hover:bg-red-50 hover:text-red-500">
+                            <IconTrash className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>
