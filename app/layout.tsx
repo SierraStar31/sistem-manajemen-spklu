@@ -12,6 +12,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "NeonCharge - Sistem Manajemen SPKLU",
   description: "Energi Bersih, Terkoneksi, Tanpa Batas",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
