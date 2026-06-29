@@ -29,6 +29,8 @@ import {
   IconBatteryCharging,
   IconRosetteDiscountCheck,
   IconArrowLeft,
+  IconMenu2,
+  IconX,
 } from "@tabler/icons-react";
 
 const ticketSchema = z.object({
@@ -121,6 +123,7 @@ const sectionNavItems = [
 export default function ResourcesPage() {
   const [submitted, setSubmitted] = useState(false);
   const [activeNav, setActiveNav] = useState("Tentang Kami");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
   const [indicator, setIndicator] = useState({ left: 0, width: 0, opacity: 0 });
 
@@ -213,7 +216,7 @@ export default function ResourcesPage() {
       {/* ═══════════════════════ NAVBAR ═══════════════════════ */}
       <nav className="fixed top-0 inset-x-0 z-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between bg-white/30 backdrop-blur-2xl rounded-2xl px-6 mt-3 border border-white/50 shadow-[0_2px_24px_-4px_rgba(0,0,0,0.04)]">
+          <div className="flex h-16 items-center justify-between bg-white/30 backdrop-blur-2xl rounded-2xl px-4 sm:px-6 mt-3 border border-white/50 shadow-[0_2px_24px_-4px_rgba(0,0,0,0.04)]">
             <Link href="/" className="flex items-center gap-2.5 shrink-0">
               <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-lg shadow-emerald-500/20">
                 <IconBolt
@@ -226,7 +229,7 @@ export default function ResourcesPage() {
               </span>
             </Link>
 
-            {/* Section Nav */}
+            {/* Section Nav - Desktop */}
             <div className="hidden md:flex items-center gap-1 relative">
               {sectionNavItems.map((item) => (
                 <a
@@ -255,15 +258,63 @@ export default function ResourcesPage() {
               />
             </div>
 
+            {/* CTA - Desktop */}
             <Link
               href="/"
-              className="flex items-center gap-2 px-5 py-2 text-[13px] font-semibold text-white bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 rounded-xl shadow-lg shadow-emerald-500/20 transition-all duration-200 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] shrink-0 border border-emerald-400/40"
+              className="hidden md:flex items-center gap-2 px-5 py-2 text-[13px] font-semibold text-white bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 rounded-xl shadow-lg shadow-emerald-500/20 transition-all duration-200 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] shrink-0 border border-emerald-400/40"
             >
               <IconArrowLeft className="h-4 w-4" />
               Kembali
             </Link>
+
+            {/* Hamburger - Mobile */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="flex md:hidden items-center justify-center w-9 h-9 rounded-xl text-slate-600 hover:bg-white/50 transition-colors duration-200"
+            >
+              {mobileMenuOpen ? (
+                <IconX className="h-5 w-5" />
+              ) : (
+                <IconMenu2 className="h-5 w-5" />
+              )}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden mx-4 mt-2 bg-white/90 backdrop-blur-2xl rounded-2xl border border-white/50 shadow-[0_8px_40px_-8px_rgba(0,0,0,0.1)] overflow-hidden">
+            <div className="p-4 space-y-1">
+              {sectionNavItems.map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  onClick={(e) => {
+                    handleNavClick(e, item.href);
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`block px-4 py-3 text-sm font-medium rounded-xl transition-colors duration-200 ${
+                    activeNav === item.label
+                      ? "text-emerald-600 bg-emerald-50/50"
+                      : "text-slate-600 hover:text-emerald-600 hover:bg-emerald-50/50"
+                  }`}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
+            <div className="px-4 pb-4">
+              <Link
+                href="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-center w-full h-11 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white text-sm font-semibold shadow-lg shadow-emerald-500/20 transition-all duration-200 border border-emerald-400/40"
+              >
+                <IconArrowLeft className="h-4 w-4 mr-2" />
+                Kembali
+              </Link>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* ═══════════════════════ HERO HEADER ═══════════════════════ */}

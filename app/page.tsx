@@ -14,6 +14,8 @@ import {
   IconMapPin,
   IconArrowRight,
   IconChevronRight,
+  IconMenu2,
+  IconX,
 } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 
@@ -51,6 +53,7 @@ const navItems = [
 export default function HomePage() {
   const [activeFilter, setActiveFilter] = useState("Semua");
   const [activeNav, setActiveNav] = useState("Beranda");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
   const [indicator, setIndicator] = useState({ left: 0, width: 0, opacity: 0 });
   const isClickScroll = useRef(false);
@@ -163,7 +166,7 @@ export default function HomePage() {
       {/* ═══════════════════════ NAVBAR ═══════════════════════ */}
       <nav className="fixed top-0 inset-x-0 z-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between bg-white/30 backdrop-blur-2xl rounded-2xl px-6 mt-3 border border-white/50 shadow-[0_2px_24px_-4px_rgba(0,0,0,0.04)]">
+          <div className="flex h-16 items-center justify-between bg-white/30 backdrop-blur-2xl rounded-2xl px-4 sm:px-6 mt-3 border border-white/50 shadow-[0_2px_24px_-4px_rgba(0,0,0,0.04)]">
             {/* Logo */}
             <div className="flex items-center gap-2.5">
               <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-lg shadow-emerald-500/20">
@@ -177,7 +180,7 @@ export default function HomePage() {
               </span>
             </div>
 
-            {/* Nav Links */}
+            {/* Nav Links - Desktop */}
             <div className="hidden md:flex items-center gap-1 relative">
               {navItems.map((item) =>
                 item.href.startsWith("/") ? (
@@ -220,14 +223,72 @@ export default function HomePage() {
               />
             </div>
 
-            {/* CTA */}
-            <Link href="/login">
+            {/* CTA - Desktop */}
+            <Link href="/login" className="hidden md:block">
               <Button className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:bg-transparent hover:from-emerald-600 hover:to-emerald-700 text-white rounded-xl px-5 h-9 text-[13px] font-semibold shadow-lg shadow-emerald-500/20 transition-all duration-200 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] border border-emerald-400/40">
                 Sign Up / Log In
               </Button>
             </Link>
+
+            {/* Hamburger - Mobile */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="flex md:hidden items-center justify-center w-9 h-9 rounded-xl text-slate-600 hover:bg-white/50 transition-colors duration-200"
+            >
+              {mobileMenuOpen ? (
+                <IconX className="h-5 w-5" />
+              ) : (
+                <IconMenu2 className="h-5 w-5" />
+              )}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden mx-4 mt-2 bg-white/90 backdrop-blur-2xl rounded-2xl border border-white/50 shadow-[0_8px_40px_-8px_rgba(0,0,0,0.1)] overflow-hidden">
+            <div className="p-4 space-y-1">
+              {navItems.map((item) =>
+                item.href.startsWith("/") ? (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block px-4 py-3 text-sm font-medium rounded-xl text-slate-600 hover:text-emerald-600 hover:bg-emerald-50/50 transition-colors duration-200"
+                  >
+                    {item.label}
+                  </Link>
+                ) : (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    onClick={(e) => {
+                      setActiveNav(item.label);
+                      handleNavClick(e, item.href);
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`block px-4 py-3 text-sm font-medium rounded-xl transition-colors duration-200 ${
+                      activeNav === item.label
+                        ? "text-emerald-600 bg-emerald-50/50"
+                        : "text-slate-600 hover:text-emerald-600 hover:bg-emerald-50/50"
+                    }`}
+                  >
+                    {item.label}
+                  </a>
+                ),
+              )}
+            </div>
+            <div className="px-4 pb-4">
+              <Link
+                href="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-center w-full h-11 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white text-sm font-semibold shadow-lg shadow-emerald-500/20 transition-all duration-200 border border-emerald-400/40"
+              >
+                Sign Up / Log In
+              </Link>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* ═══════════════════════ HERO ═══════════════════════ */}

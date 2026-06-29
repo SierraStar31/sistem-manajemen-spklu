@@ -222,15 +222,15 @@ export default function AdminDashboardPage() {
         <CardContent>
           <div className="space-y-3">
             {activities?.map((activity) => (
-              <div key={activity.id} className="flex items-center justify-between rounded-xl bg-white/40 backdrop-blur-sm p-3 border border-white/60">
+              <div key={activity.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 rounded-xl bg-white/40 backdrop-blur-sm p-3 border border-white/60">
                 <div className="flex items-center gap-3">
-                  <div className={`h-2 w-2 rounded-full ${
+                  <div className={`h-2 w-2 rounded-full flex-shrink-0 ${
                     activity.type === "success" ? "bg-emerald-500" :
                     activity.type === "warning" ? "bg-amber-500" : "bg-blue-500"
                   }`} />
                   <span className="text-sm text-slate-700">{activity.event}</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 pl-5 sm:pl-0">
                   <span className="text-xs text-slate-400">{activity.time}</span>
                   <Badge variant={activityBadge[activity.type]} className="text-[10px]">
                     {activity.type === "success" ? "Berhasil" : activity.type === "warning" ? "Peringatan" : "Info"}

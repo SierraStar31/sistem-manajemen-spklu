@@ -79,7 +79,7 @@ export default function OverridePage() {
           <CardTitle className="text-base tracking-tight">Panel Kendali Mesin</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-5 sm:grid-cols-3">
+          <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {machines.map((machine) => (
               <Card key={machine.id} className="border border-white/60 bg-white/60 backdrop-blur-xl rounded-2xl shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] hover:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.12)] transition-all duration-[400ms] hover:-translate-y-1">
                 <CardContent className="space-y-4 pt-6">

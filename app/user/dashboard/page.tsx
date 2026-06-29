@@ -166,7 +166,7 @@ export default function UserDashboardPage() {
       </div>
 
       {/* Profile + Vehicle */}
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid gap-5 grid-cols-1 sm:grid-cols-2">
         {/* Data Diri */}
         <Card className="border border-white/60 bg-white/60 backdrop-blur-xl rounded-[1.5rem] shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] hover:shadow-[0_20px_60px_-12px_rgba(16,185,129,0.2)] transition-all duration-[400ms] hover:-translate-y-1 overflow-hidden">
           <CardHeader className="flex flex-row items-center gap-3 pb-2">
@@ -310,7 +310,7 @@ export default function UserDashboardPage() {
           <CardTitle className="text-base tracking-tight">Pengaturan Akun</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center gap-3">
               <IconBell className="h-5 w-5 text-slate-400" />
               <div>
@@ -321,7 +321,7 @@ export default function UserDashboardPage() {
             <Switch defaultChecked />
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center gap-3">
               <IconLock className="h-5 w-5 text-slate-400" />
               <div>
@@ -332,7 +332,7 @@ export default function UserDashboardPage() {
             <Switch />
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center gap-3">
               <IconLanguage className="h-5 w-5 text-slate-400" />
               <div>
