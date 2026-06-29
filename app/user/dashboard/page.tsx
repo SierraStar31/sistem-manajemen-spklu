@@ -33,8 +33,8 @@ const vehicleProfileSchema = z.object({
     .string()
     .min(1, "Plat nomor wajib diisi")
     .regex(
-      /^[A-Z]{1,2}\s?\d{1,4}\s?[A-Z]{1,3}$/,
-      "Format plat tidak valid (contoh: B 1234 ABC)"
+      /^[a-zA-Z]{1,2}\s\d{1,4}(?:\s[a-zA-Z]{1,3})?$/,
+      "Format plat tidak valid. Gunakan spasi, contoh: KT 1234 EV atau KT 1975"
     ),
   tipeKonektor: z.string().min(1, "Pilih tipe konektor"),
 });
