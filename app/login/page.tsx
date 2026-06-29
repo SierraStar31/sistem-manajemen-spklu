@@ -108,7 +108,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-emerald-50/60 via-[#f6fdf8] to-teal-50/40 font-sans antialiased">
+    <div className="relative flex min-h-screen items-center justify-center overflow-y-auto bg-gradient-to-br from-emerald-50/60 via-[#f6fdf8] to-teal-50/40 font-sans antialiased pt-24 pb-8">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-[20%] -left-[10%] w-[700px] h-[700px] rounded-full bg-gradient-to-br from-emerald-200/60 to-teal-100/40 blur-[100px]" />
         <div className="absolute top-[10%] right-[0%] w-[500px] h-[500px] rounded-full bg-gradient-to-bl from-emerald-100/70 to-cyan-100/30 blur-[80px]" />
@@ -195,7 +195,7 @@ export default function LoginPage() {
       </nav>
 
       {/* Login Card - Landscape */}
-      <div className="relative z-10 w-full max-w-4xl mx-4 rounded-[1.5rem] border border-white/60 bg-white/60 backdrop-blur-xl shadow-[0_8px_40px_-8px_rgba(0,0,0,0.06)] overflow-hidden mt-16">
+      <div className="relative z-10 w-full max-w-4xl mx-4 rounded-[1.5rem] border border-white/60 bg-white/60 backdrop-blur-xl shadow-[0_8px_40px_-8px_rgba(0,0,0,0.06)] overflow-hidden">
         <div className="flex flex-col md:flex-row min-h-[auto] md:min-h-[540px]">
           {/* Left - Branding */}
           <div className="flex flex-col items-center justify-center p-6 sm:p-8 md:w-2/5 bg-gradient-to-br from-emerald-500/10 via-emerald-50/50 to-teal-50/30 border-b md:border-b-0 md:border-r border-white/40">

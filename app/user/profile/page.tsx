@@ -165,7 +165,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-emerald-50/60 via-[#f6fdf8] to-teal-50/40 font-sans antialiased p-4">
+    <div className="relative flex min-h-screen items-center justify-center overflow-y-auto bg-gradient-to-br from-emerald-50/60 via-[#f6fdf8] to-teal-50/40 font-sans antialiased pt-24 pb-8 px-4">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-[20%] -left-[10%] w-[700px] h-[700px] rounded-full bg-gradient-to-br from-emerald-200/60 to-teal-100/40 blur-[100px]" />
         <div className="absolute top-[10%] right-[0%] w-[500px] h-[500px] rounded-full bg-gradient-to-bl from-emerald-100/70 to-cyan-100/30 blur-[80px]" />
@@ -242,7 +242,7 @@ export default function ProfilePage() {
       </nav>
 
       {/* Profile Card - Landscape */}
-      <div className="relative z-10 w-full max-w-4xl mx-4 rounded-[1.5rem] border border-white/60 bg-white/60 backdrop-blur-xl shadow-[0_8px_40px_-8px_rgba(0,0,0,0.06)] overflow-hidden mt-16">
+      <div className="relative z-10 w-full max-w-4xl mx-4 rounded-[1.5rem] border border-white/60 bg-white/60 backdrop-blur-xl shadow-[0_8px_40px_-8px_rgba(0,0,0,0.06)] overflow-hidden">
         {/* Step Indicator */}
         <div className="flex items-center justify-center gap-1.5 sm:gap-2 py-4 sm:py-5 border-b border-white/40 bg-gradient-to-r from-emerald-50/50 via-white/30 to-emerald-50/50 px-4">
           {steps.map((step, i) => (
@@ -460,11 +460,13 @@ export default function ProfilePage() {
             )}
           </div>
         </div>
+        {/* Step Footer */}
+        <div className="flex items-center justify-center py-3 border-t border-white/40 bg-gradient-to-r from-emerald-50/50 via-white/30 to-emerald-50/50 px-4">
+          <p className="text-xs text-slate-400">
+            Langkah {currentStep + 1} dari {steps.length} — {steps[currentStep]}
+          </p>
+        </div>
       </div>
-
-      <p className="fixed bottom-4 text-xs text-slate-400">
-        Langkah {currentStep + 1} dari {steps.length} — {steps[currentStep]}
-      </p>
     </div>
   );
 }
