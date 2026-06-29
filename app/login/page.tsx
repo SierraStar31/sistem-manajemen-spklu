@@ -13,6 +13,8 @@ import {
   IconMail,
   IconLock,
   IconArrowLeft,
+  IconMenu2,
+  IconX,
 } from "@tabler/icons-react";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
@@ -53,6 +55,7 @@ export default function LoginPage() {
   const router = useRouter();
   const [selectedRole, setSelectedRole] = useState<"user" | "admin">("user");
   const [isLoading, setIsLoading] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const {
     register,
@@ -113,43 +116,86 @@ export default function LoginPage() {
         <div className="absolute bottom-[15%] right-[15%] w-[400px] h-[400px] rounded-full bg-gradient-to-tl from-teal-100/40 to-emerald-50/20 blur-[70px]" />
       </div>
 
-      {/* Header with Glassmorphism */}
-      <nav className="fixed top-0 inset-x-0 z-50 px-4 sm:px-6 lg:px-8 pt-3">
-        <div className="mx-auto max-w-7xl flex h-14 items-center justify-between bg-white/30 backdrop-blur-2xl rounded-2xl px-5 border border-white/50 shadow-[0_2px_24px_-4px_rgba(0,0,0,0.04)]">
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-lg shadow-emerald-500/20 transition-all duration-300 group-hover:shadow-xl group-hover:shadow-emerald-500/30">
-              <IconBolt className="h-4.5 w-4.5 text-white" strokeWidth={2.5} />
+      {/* ═══════════════════════ NAVBAR ═══════════════════════ */}
+      <nav className="fixed top-0 inset-x-0 z-50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between bg-white/30 backdrop-blur-2xl rounded-2xl px-4 sm:px-6 mt-3 border border-white/50 shadow-[0_2px_24px_-4px_rgba(0,0,0,0.04)]">
+            <Link href="/" className="flex items-center gap-2.5 shrink-0">
+              <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-lg shadow-emerald-500/20 transition-all duration-300 group-hover:shadow-xl group-hover:shadow-emerald-500/30">
+                <IconBolt className="h-4.5 w-4.5 text-white" strokeWidth={2.5} />
+              </div>
+              <span className="text-lg font-semibold tracking-tight bg-gradient-to-r from-slate-900 to-slate-600 bg-clip-text text-transparent">
+                NeonCharge
+              </span>
+            </Link>
+
+            {/* Nav Links - Desktop */}
+            <div className="hidden md:flex items-center gap-1 relative">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="relative px-4 py-2 text-[13px] font-medium rounded-xl transition-colors duration-200 z-10 text-slate-500 hover:text-emerald-600"
+                >
+                  {item.label}
+                </Link>
+              ))}
             </div>
-            <span className="text-lg font-semibold tracking-tight bg-gradient-to-r from-slate-900 to-slate-600 bg-clip-text text-transparent">
-              NeonCharge
-            </span>
-          </Link>
 
-          {/* Nav Links */}
-          <div className="hidden md:flex items-center gap-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="px-4 py-2 text-[13px] font-medium rounded-xl transition-colors duration-200 text-slate-500 hover:text-emerald-600 hover:bg-white/40"
-              >
-                {item.label}
-              </Link>
-            ))}
+            {/* CTA - Desktop */}
+            <Link
+              href="/"
+              className="hidden md:flex items-center gap-2 px-5 py-2 text-[13px] font-semibold text-white bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 rounded-xl shadow-lg shadow-emerald-500/20 transition-all duration-200 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] shrink-0 border border-emerald-400/40"
+            >
+              <IconArrowLeft className="h-4 w-4" />
+              Kembali
+            </Link>
+
+            {/* Hamburger - Mobile */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="flex md:hidden items-center justify-center w-9 h-9 rounded-xl text-slate-600 hover:bg-white/50 transition-colors duration-200"
+            >
+              {mobileMenuOpen ? (
+                <IconX className="h-5 w-5" />
+              ) : (
+                <IconMenu2 className="h-5 w-5" />
+              )}
+            </button>
           </div>
-
-          <Link
-            href="/"
-            className="flex items-center gap-2 px-5 py-2 text-[13px] font-semibold text-white bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 rounded-xl shadow-lg shadow-emerald-500/20 transition-all duration-200 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] shrink-0 border border-emerald-400/40"
-          >
-            <IconArrowLeft className="h-4 w-4" />
-            Kembali
-          </Link>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden mx-4 mt-2 bg-white/90 backdrop-blur-2xl rounded-2xl border border-white/50 shadow-[0_8px_40px_-8px_rgba(0,0,0,0.1)] overflow-hidden">
+            <div className="p-4 space-y-1">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 text-sm font-medium rounded-xl text-slate-600 hover:text-emerald-600 hover:bg-emerald-50/50 transition-colors duration-200"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+            <div className="px-4 pb-4">
+              <Link
+                href="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-center w-full h-11 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white text-sm font-semibold shadow-lg shadow-emerald-500/20 transition-all duration-200 border border-emerald-400/40"
+              >
+                <IconArrowLeft className="h-4 w-4 mr-2" />
+                Kembali
+              </Link>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* Login Card - Landscape */}
-      <div className="relative z-10 w-full max-w-4xl mx-4 rounded-[1.5rem] border border-white/60 bg-white/60 backdrop-blur-xl shadow-[0_8px_40px_-8px_rgba(0,0,0,0.06)] overflow-hidden">
+      <div className="relative z-10 w-full max-w-4xl mx-4 rounded-[1.5rem] border border-white/60 bg-white/60 backdrop-blur-xl shadow-[0_8px_40px_-8px_rgba(0,0,0,0.06)] overflow-hidden mt-16">
         <div className="flex flex-col md:flex-row min-h-[auto] md:min-h-[540px]">
           {/* Left - Branding */}
           <div className="flex flex-col items-center justify-center p-6 sm:p-8 md:w-2/5 bg-gradient-to-br from-emerald-500/10 via-emerald-50/50 to-teal-50/30 border-b md:border-b-0 md:border-r border-white/40">
