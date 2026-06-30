@@ -236,3 +236,120 @@ export function generateRiwayatTransaksi(transactions: Transaction[]) {
   addFooter(doc);
   doc.save("NeonCharge-Riwayat-Transaksi.pdf");
 }
+
+interface UserTransaction {
+  id: string;
+  date: string;
+  rawDate?: string;
+  location?: string;
+  station?: string;
+  user: string;
+  kwh: number;
+  price: string;
+  rawPrice?: number;
+  status: string;
+}
+
+export function generateStrukPembayaran(transactions: UserTransaction[], userName: string) {
+  const doc = new jsPDF({ orientation: "portrait" });
+  const pageWidth = doc.internal.pageSize.getWidth();
+
+  addHeader(doc, "Struk Pembayaran");
+
+  let y = 54;
+
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(100, 116, 139);
+  doc.text(`Pengguna: ${userName}`, 20, y);
+  y += 6;
+  doc.text(`Total: ${transactions.length} transaksi`, 20, y);
+  y += 12;
+
+  const completed = transactions.filter((t) => t.status === "Selesai");
+  const totalRevenue = completed.reduce((sum, t) => sum + (t.rawPrice ?? (parseInt(t.price.replace(/\D/g, ""), 10) || 0)), 0);
+  const totalKwh = completed.reduce((sum, t) => sum + t.kwh, 0);
+
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(51, 65, 85);
+  doc.text("Ringkasan Pembayaran", 20, y);
+  y += 10;
+
+  const summaryData = [
+    ["Total Pembayaran", formatCurrency(totalRevenue)],
+    ["Total Energi", `${totalKwh.toLocaleString("id-ID")} kWh`],
+    ["Transaksi Selesai", `${completed.length}`],
+    ["Rata-rata per Transaksi", completed.length > 0 ? formatCurrency(Math.round(totalRevenue / completed.length)) : "-"],
+  ];
+
+  autoTable(doc, {
+    startY: y,
+    head: [["Metrik", "Nilai"]],
+    body: summaryData,
+    theme: "grid",
+    headStyles: { fillColor: [16, 185, 129], textColor: [255, 255, 255], fontStyle: "bold", fontSize: 9 },
+    bodyStyles: { fontSize: 9, textColor: [51, 65, 85] },
+    alternateRowStyles: { fillColor: [240, 253, 244] },
+    columnStyles: { 0: { fontStyle: "bold", cellWidth: 60 }, 1: { halign: "right" } },
+    margin: { left: 20, right: 20 },
+  });
+
+  y = (doc as jsPDF & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 12;
+
+  if (y > 240) {
+    doc.addPage();
+    y = 20;
+  }
+
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(51, 65, 85);
+  doc.text("Detail Transaksi", 20, y);
+  y += 2;
+
+  const tableData = transactions.map((tx) => [
+    tx.id,
+    tx.date,
+    tx.station || tx.location || "-",
+    tx.status === "Dibatalkan" ? "-" : `${tx.kwh}`,
+    tx.status === "Dibatalkan" ? "-" : tx.price,
+    tx.status,
+  ]);
+
+  autoTable(doc, {
+    startY: y,
+    head: [["ID", "Waktu", "Stasiun", "kWh", "Harga", "Status"]],
+    body: tableData,
+    theme: "grid",
+    headStyles: { fillColor: [16, 185, 129], textColor: [255, 255, 255], fontStyle: "bold", fontSize: 8 },
+    bodyStyles: { fontSize: 7.5, textColor: [51, 65, 85] },
+    alternateRowStyles: { fillColor: [240, 253, 244] },
+    columnStyles: {
+      0: { cellWidth: 22 },
+      1: { cellWidth: 42 },
+      3: { halign: "right" },
+      4: { halign: "right", fontStyle: "bold" },
+      5: { cellWidth: 28 },
+    },
+    didParseCell(data) {
+      if (data.section === "body" && data.column.index === 5) {
+        const val = data.cell.raw as string;
+        if (val === "Selesai") {
+          data.cell.styles.textColor = [16, 125, 82];
+          data.cell.styles.fontStyle = "bold";
+        } else if (val === "Dibatalkan") {
+          data.cell.styles.textColor = [220, 38, 38];
+          data.cell.styles.fontStyle = "bold";
+        } else if (val === "Proses") {
+          data.cell.styles.textColor = [217, 119, 6];
+          data.cell.styles.fontStyle = "bold";
+        }
+      }
+    },
+    margin: { left: 20, right: 20 },
+  });
+
+  addFooter(doc);
+  doc.save(`NeonCharge-Struk-${userName.replace(/\s+/g, "-")}.pdf`);
+}

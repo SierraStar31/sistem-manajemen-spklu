@@ -86,6 +86,8 @@ export default function LoginPage() {
         kapasitas: "72.6 kWh",
         platNomor: "KT 1234 EV",
         tipeKonektor: "CCS2",
+        foto: "",
+        saldo: 250000,
       }));
       router.push("/user/dashboard");
     }
@@ -103,6 +105,8 @@ export default function LoginPage() {
       kapasitas: "72.6 kWh",
       platNomor: "KT 1234 EV",
       tipeKonektor: "CCS2",
+      foto: "",
+      saldo: 250000,
     }));
     router.push("/user/dashboard");
   };

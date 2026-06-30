@@ -79,11 +79,12 @@ function syncStationStatus(stationId: string, isOn: boolean) {
     const updated = stations.map((s: Station) => {
       if (s.id === stationId) {
         if (!isOn) return { ...s, status: "Offline" as const };
-        if (s.status === "Offline") return { ...s, status: "Aktif" as const };
+        if (s.status === "Offline" || s.status === "Maintenance") return { ...s, status: "Aktif" as const };
       }
       return s;
     });
     localStorage.setItem("neoncharge_stations", JSON.stringify(updated));
+    window.dispatchEvent(new Event("neoncharge_stations_updated"));
   } catch {}
 }
 

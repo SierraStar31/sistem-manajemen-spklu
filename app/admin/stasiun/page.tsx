@@ -81,6 +81,23 @@ export default function StasiunPage() {
   }, []);
 
   useEffect(() => {
+    const handleStorage = () => {
+      const stored = getStoredStations();
+      if (stored && stored.length > 0) {
+        setStations((prev) => {
+          const prevStr = JSON.stringify(prev);
+          const newStr = JSON.stringify(stored);
+          return prevStr === newStr ? prev : stored;
+        });
+      }
+    };
+    window.addEventListener("neoncharge_stations_updated", handleStorage);
+    return () => {
+      window.removeEventListener("neoncharge_stations_updated", handleStorage);
+    };
+  }, []);
+
+  useEffect(() => {
     if (initialized.current) {
       localStorage.setItem("neoncharge_stations", JSON.stringify(stations));
     }

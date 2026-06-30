@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
@@ -18,6 +18,7 @@ import {
   IconAlertCircle,
   IconMenu2,
   IconX,
+  IconCamera,
 } from "@tabler/icons-react";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
@@ -96,6 +97,10 @@ export default function ProfilePage() {
   const [platNomor, setPlatNomor] = useState("");
   const [tipeKonektor, setTipeKonektor] = useState("CCS2");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [foto, setFoto] = useState("");
+  const [photoMode, setPhotoMode] = useState<"upload" | "url">("upload");
+  const [photoUrl, setPhotoUrl] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const validateStep0 = () => {
     const result = step0Schema.safeParse({ nama, email, telepon });
@@ -145,6 +150,8 @@ export default function ProfilePage() {
       kapasitas,
       platNomor,
       tipeKonektor,
+      foto,
+      saldo: 0,
     };
     localStorage.setItem("neoncharge_user", JSON.stringify(userData));
     router.push("/user/dashboard");
@@ -295,6 +302,61 @@ export default function ProfilePage() {
             {/* Step 0: Data Diri */}
             {currentStep === 0 && (
               <div className="space-y-4">
+                {/* Photo Upload */}
+                <div className="flex flex-col items-center gap-3">
+                  <div className="relative group">
+                    <div className="h-24 w-24 rounded-2xl overflow-hidden border-2 border-dashed border-emerald-300 bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center">
+                      {foto ? (
+                        <img src={foto} alt="Foto Profil" className="h-full w-full object-cover" />
+                      ) : (
+                        <IconUser className="h-10 w-10 text-emerald-300" />
+                      )}
+                    </div>
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="absolute -bottom-1 -right-1 h-8 w-8 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 text-white flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+                    >
+                      <IconCamera className="h-4 w-4" />
+                    </button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        if (file.size > 2 * 1024 * 1024) { alert("Ukuran foto maksimal 2MB"); return; }
+                        const reader = new FileReader();
+                        reader.onload = (ev) => setFoto(ev.target?.result as string);
+                        reader.readAsDataURL(file);
+                      }}
+                      className="hidden"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button type="button" onClick={() => setPhotoMode("upload")} className={`text-xs px-3 py-1.5 rounded-lg transition-colors ${photoMode === "upload" ? "bg-emerald-100 text-emerald-700 font-medium" : "text-slate-400 hover:text-slate-600"}`}>
+                      Upload File
+                    </button>
+                    <button type="button" onClick={() => setPhotoMode("url")} className={`text-xs px-3 py-1.5 rounded-lg transition-colors ${photoMode === "url" ? "bg-emerald-100 text-emerald-700 font-medium" : "text-slate-400 hover:text-slate-600"}`}>
+                      URL Gambar
+                    </button>
+                  </div>
+                  {photoMode === "url" && (
+                    <div className="flex gap-2 w-full max-w-sm">
+                      <Input
+                        value={photoUrl}
+                        onChange={(e) => setPhotoUrl(e.target.value)}
+                        placeholder="https://example.com/photo.jpg"
+                        className="h-9 rounded-xl text-xs"
+                      />
+                      <Button type="button" size="sm" variant="outline" onClick={() => { if (photoUrl.trim()) { setFoto(photoUrl.trim()); setPhotoUrl(""); } }} className="h-9 rounded-xl text-xs px-3">
+                        OK
+                      </Button>
+                    </div>
+                  )}
+                  <p className="text-xs text-slate-400">Foto profil (opsional)</p>
+                </div>
+
                 <div className="space-y-3">
                   <div className="space-y-1.5">
                     <label className="text-sm font-medium text-slate-700 flex items-center gap-1.5">

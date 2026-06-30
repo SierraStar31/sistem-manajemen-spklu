@@ -2,9 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { IconHistory, IconCalendar } from "@tabler/icons-react";
+import {
+  IconHistory,
+  IconCalendar,
+  IconDownload,
+  IconBolt,
+  IconMapPin,
+  IconClock,
+  IconLicense,
+  IconCoin,
+} from "@tabler/icons-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/app/components/ui/card";
+import { Button } from "@/app/components/ui/button";
 import { Badge } from "@/app/components/ui/badge";
 import {
   Table,
@@ -14,6 +23,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/app/components/ui/dialog";
+import { generateStrukPembayaran } from "@/lib/pdf-utils";
+import { useLanguage } from "@/app/providers";
+import { t } from "@/lib/i18n";
 
 interface Transaction {
   id: string;
@@ -165,9 +183,11 @@ const statusVariant: Record<string, "default" | "secondary" | "destructive" | "o
 };
 
 export default function RiwayatPage() {
+  const { locale } = useLanguage();
   const [userName, setUserName] = useState("");
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState(0);
+  const [selectedYear, setSelectedYear] = useState(0);
+  const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem("neoncharge_user");
@@ -185,16 +205,28 @@ export default function RiwayatPage() {
 
   const filteredTransactions = transactions?.filter((txn) => {
     const date = new Date(txn.rawDate);
-    return date.getMonth() + 1 === selectedMonth && date.getFullYear() === selectedYear;
+    if (selectedMonth && date.getMonth() + 1 !== selectedMonth) return false;
+    if (selectedYear && date.getFullYear() !== selectedYear) return false;
+    return true;
   });
 
   const availableYears = [...new Set(transactions?.map((t) => new Date(t.rawDate).getFullYear()) || [])].sort((a, b) => b - a);
 
   return (
     <>
-      <div>
-        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">Riwayat Transaksi</h1>
-        <p className="mt-1 text-sm text-slate-400">Daftar pengisian daya terakhir Anda.</p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">{t(locale, "riwayatTransaksi")}</h1>
+          <p className="mt-1 text-sm text-slate-400">{t(locale, "daftarPengisianDaya")}</p>
+        </div>
+        {filteredTransactions && filteredTransactions.length > 0 && (
+          <Button
+            onClick={() => generateStrukPembayaran(filteredTransactions, userName)}
+            className="h-9 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold shadow-lg shadow-emerald-500/20 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] border border-emerald-400/40"
+          >
+            <IconDownload className="h-4 w-4 mr-1.5" /> {t(locale, "unduhPDF")}
+          </Button>
+        )}
       </div>
 
       <Card className="border border-white/60 bg-white/60 backdrop-blur-xl rounded-[1.5rem] shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] hover:shadow-[0_20px_60px_-12px_rgba(16,185,129,0.2)] transition-all duration-[400ms] overflow-hidden">
@@ -214,6 +246,7 @@ export default function RiwayatPage() {
                 onChange={(e) => setSelectedMonth(Number(e.target.value))}
                 className="h-9 rounded-xl border border-slate-200/80 bg-white/80 backdrop-blur-xl px-3 py-1 text-sm text-slate-900 outline-none transition-all focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
               >
+                <option value={0}>Semua Bulan</option>
                 {months.map((m, i) => (
                   <option key={i} value={i + 1}>{m}</option>
                 ))}
@@ -223,12 +256,13 @@ export default function RiwayatPage() {
                 onChange={(e) => setSelectedYear(Number(e.target.value))}
                 className="h-9 rounded-xl border border-slate-200/80 bg-white/80 backdrop-blur-xl px-3 py-1 text-sm text-slate-900 outline-none transition-all focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
               >
+                <option value={0}>Semua Tahun</option>
                 {availableYears.length > 0 ? (
                   availableYears.map((y) => (
                     <option key={y} value={y}>{y}</option>
                   ))
                 ) : (
-                  <option value={new Date().getFullYear()}>{new Date().getFullYear()}</option>
+                  <option value={2026}>2026</option>
                 )}
               </select>
             </div>
@@ -244,16 +278,16 @@ export default function RiwayatPage() {
               <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 mb-4">
                 <IconHistory className="h-8 w-8 text-slate-300" />
               </div>
-              <p className="text-sm font-medium text-slate-500">Belum ada riwayat transaksi</p>
-              <p className="text-xs text-slate-400 mt-1">Riwayat pengisian daya Anda akan muncul di sini</p>
+              <p className="text-sm font-medium text-slate-500">{t(locale, "belumAdaRiwayat")}</p>
+              <p className="text-xs text-slate-400 mt-1">{t(locale, "riwayatMuncul")}</p>
             </div>
           ) : filteredTransactions && filteredTransactions.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 mb-4">
                 <IconCalendar className="h-8 w-8 text-slate-300" />
               </div>
-              <p className="text-sm font-medium text-slate-500">Tidak ada transaksi di bulan ini</p>
-              <p className="text-xs text-slate-400 mt-1">Coba pilih bulan atau tahun yang lain</p>
+              <p className="text-sm font-medium text-slate-500">{t(locale, "tidakAdaTransaksi")}</p>
+              <p className="text-xs text-slate-400 mt-1">{t(locale, "cobaBulanLain")}</p>
             </div>
           ) : (
             <div className="overflow-x-auto max-h-[500px] overflow-y-auto">
@@ -269,7 +303,11 @@ export default function RiwayatPage() {
                 </TableHeader>
                 <TableBody>
                   {filteredTransactions?.map((txn) => (
-                    <TableRow key={txn.id} className="border-slate-200/40">
+                    <TableRow
+                      key={txn.id}
+                      className="border-slate-200/40 cursor-pointer hover:bg-emerald-50/50 transition-colors"
+                      onClick={() => setSelectedTx(txn)}
+                    >
                       <TableCell className="font-medium whitespace-nowrap">{txn.date}</TableCell>
                       <TableCell className="whitespace-nowrap">{txn.location}</TableCell>
                       <TableCell className="text-right">{txn.kwh}</TableCell>
@@ -285,6 +323,96 @@ export default function RiwayatPage() {
           )}
         </CardContent>
       </Card>
+      {/* Detail Transaksi Dialog */}
+      <Dialog open={!!selectedTx} onOpenChange={() => setSelectedTx(null)}>
+        <DialogContent className="sm:max-w-md rounded-[1.5rem] border border-white/60 bg-white/90 backdrop-blur-xl shadow-[0_20px_60px_-12px_rgba(0,0,0,0.15)]">
+          <DialogHeader>
+            <DialogTitle className="text-center text-lg tracking-tight">
+              Detail Transaksi
+            </DialogTitle>
+          </DialogHeader>
+          {selectedTx && (
+            <div className="space-y-4 py-2">
+              <div className="flex items-center justify-center">
+                <div className={`flex h-14 w-14 items-center justify-center rounded-2xl shadow-lg ${
+                  selectedTx.status === "Selesai"
+                    ? "bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-emerald-500/25"
+                    : selectedTx.status === "Proses"
+                      ? "bg-gradient-to-br from-amber-400 to-amber-500 shadow-amber-500/25"
+                      : "bg-gradient-to-br from-red-400 to-red-500 shadow-red-500/25"
+                }`}>
+                  <IconBolt className="h-7 w-7 text-white" strokeWidth={2} />
+                </div>
+              </div>
+
+              <div className="rounded-2xl bg-slate-50/80 backdrop-blur-xl border border-slate-200/60 p-4 space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-slate-400 flex items-center gap-1.5">
+                    <IconHistory className="h-3 w-3" /> ID Transaksi
+                  </span>
+                  <span className="text-sm font-mono font-bold text-slate-900">{selectedTx.id}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-slate-400 flex items-center gap-1.5">
+                    <IconClock className="h-3 w-3" /> Waktu
+                  </span>
+                  <span className="text-sm font-medium text-slate-900 text-right">{selectedTx.date}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-slate-400 flex items-center gap-1.5">
+                    <IconMapPin className="h-3 w-3" /> Lokasi
+                  </span>
+                  <span className="text-sm font-medium text-slate-900 text-right">{selectedTx.location}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-slate-400 flex items-center gap-1.5">
+                    <IconLicense className="h-3 w-3" /> Status
+                  </span>
+                  <Badge variant={statusVariant[selectedTx.status]}>{selectedTx.status}</Badge>
+                </div>
+
+                <div className="border-t border-slate-200/60 pt-3 space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-slate-400 flex items-center gap-1.5">
+                      <IconBolt className="h-3 w-3" /> Energi
+                    </span>
+                    <span className="text-sm font-semibold text-slate-900">
+                      {selectedTx.status === "Dibatalkan" ? "-" : `${selectedTx.kwh} kWh`}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-slate-400 flex items-center gap-1.5">
+                      <IconCoin className="h-3 w-3" /> Total Biaya
+                    </span>
+                    <span className="text-base font-bold bg-gradient-to-r from-emerald-500 to-emerald-600 bg-clip-text text-transparent">
+                      {selectedTx.status === "Dibatalkan" ? "Rp 0" : selectedTx.price}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setSelectedTx(null)}
+                  className="flex-1 h-11 rounded-2xl border-slate-200/80 bg-white/80 font-semibold text-slate-700"
+                >
+                  {t(locale, "batalkan")}
+                </Button>
+                {selectedTx.status === "Selesai" && (
+                  <Button
+                    onClick={() => generateStrukPembayaran([selectedTx], userName)}
+                    className="flex-1 h-11 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold shadow-lg shadow-emerald-500/20 transition-all duration-300"
+                  >
+                    <IconDownload className="h-4 w-4 mr-1.5" />
+                    {t(locale, "strukPembayaran")}
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

@@ -5,8 +5,13 @@ import {
   IconHistory,
   IconDownload,
   IconFilter,
+  IconBolt,
+  IconMapPin,
+  IconClock,
+  IconUser,
+  IconCoin,
 } from "@tabler/icons-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/app/components/ui/card";
+import { Card, CardContent } from "@/app/components/ui/card";
 import { Button } from "@/app/components/ui/button";
 import {
   Table,
@@ -16,6 +21,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/app/components/ui/dialog";
 import { generateRiwayatTransaksi } from "@/lib/pdf-utils";
 
 interface Transaction {
@@ -146,7 +157,6 @@ function generateTransactions(): Transaction[] {
         rawDate: picked.raw,
         station: station.name,
         user: users[userIdx],
-        user: users[userIdx],
         kwh,
         price: `Rp ${(kwh * pricePerKwh).toLocaleString("id-ID")}`,
         rawPrice: kwh * pricePerKwh,
@@ -196,6 +206,7 @@ export default function TransaksiPage() {
   const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
+  const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
 
   const filtered = allTransactions.filter((t) => {
     if (filter !== "Semua" && t.status !== filter) return false;
@@ -356,7 +367,7 @@ export default function TransaksiPage() {
                 ) : filtered.map((tx) => {
                   const sc = statusConfig[tx.status];
                   return (
-                    <TableRow key={tx.id} className="border-slate-200/40">
+                    <TableRow key={tx.id} className="border-slate-200/40 cursor-pointer hover:bg-emerald-50/50 transition-colors" onClick={() => setSelectedTx(tx)}>
                       <TableCell className="font-mono font-medium text-sm whitespace-nowrap">{tx.id}</TableCell>
                       <TableCell className="text-sm whitespace-nowrap">{tx.date}</TableCell>
                       <TableCell className="text-sm whitespace-nowrap">{tx.station}</TableCell>
@@ -374,6 +385,102 @@ export default function TransaksiPage() {
           </div>
         </CardContent>
       </Card>
+      {/* Detail Transaksi Dialog */}
+      <Dialog open={!!selectedTx} onOpenChange={() => setSelectedTx(null)}>
+        <DialogContent className="sm:max-w-md rounded-[1.5rem] border border-white/60 bg-white/90 backdrop-blur-xl shadow-[0_20px_60px_-12px_rgba(0,0,0,0.15)]">
+          <DialogHeader>
+            <DialogTitle className="text-center text-lg tracking-tight">
+              Detail Transaksi
+            </DialogTitle>
+          </DialogHeader>
+          {selectedTx && (
+            <div className="space-y-4 py-2">
+              <div className="flex items-center justify-center">
+                <div className={`flex h-14 w-14 items-center justify-center rounded-2xl shadow-lg ${
+                  selectedTx.status === "Selesai"
+                    ? "bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-emerald-500/25"
+                    : selectedTx.status === "Proses"
+                      ? "bg-gradient-to-br from-amber-400 to-amber-500 shadow-amber-500/25"
+                      : "bg-gradient-to-br from-red-400 to-red-500 shadow-red-500/25"
+                }`}>
+                  <IconBolt className="h-7 w-7 text-white" strokeWidth={2} />
+                </div>
+              </div>
+
+              <div className="rounded-2xl bg-slate-50/80 backdrop-blur-xl border border-slate-200/60 p-4 space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-slate-400 flex items-center gap-1.5">
+                    <IconHistory className="h-3 w-3" /> ID Transaksi
+                  </span>
+                  <span className="text-sm font-mono font-bold text-slate-900">{selectedTx.id}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-slate-400 flex items-center gap-1.5">
+                    <IconClock className="h-3 w-3" /> Waktu
+                  </span>
+                  <span className="text-sm font-medium text-slate-900 text-right">{selectedTx.date}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-slate-400 flex items-center gap-1.5">
+                    <IconMapPin className="h-3 w-3" /> Stasiun
+                  </span>
+                  <span className="text-sm font-medium text-slate-900 text-right">{selectedTx.station}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-slate-400 flex items-center gap-1.5">
+                    <IconUser className="h-3 w-3" /> User
+                  </span>
+                  <span className="text-sm font-medium text-slate-900">{selectedTx.user}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-slate-400">Status</span>
+                  <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ${statusConfig[selectedTx.status].bg} ${statusConfig[selectedTx.status].text} ${statusConfig[selectedTx.status].border}`}>
+                    {selectedTx.status}
+                  </span>
+                </div>
+
+                <div className="border-t border-slate-200/60 pt-3 space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-slate-400 flex items-center gap-1.5">
+                      <IconBolt className="h-3 w-3" /> Energi
+                    </span>
+                    <span className="text-sm font-semibold text-slate-900">
+                      {selectedTx.status === "Dibatalkan" ? "-" : `${selectedTx.kwh} kWh`}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-slate-400 flex items-center gap-1.5">
+                      <IconCoin className="h-3 w-3" /> Total Biaya
+                    </span>
+                    <span className="text-base font-bold bg-gradient-to-r from-emerald-500 to-emerald-600 bg-clip-text text-transparent">
+                      {selectedTx.status === "Dibatalkan" ? "Rp 0" : selectedTx.price}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setSelectedTx(null)}
+                  className="flex-1 h-11 rounded-2xl border-slate-200/80 bg-white/80 font-semibold text-slate-700"
+                >
+                  Tutup
+                </Button>
+                {selectedTx.status === "Selesai" && (
+                  <Button
+                    onClick={() => generateRiwayatTransaksi([selectedTx])}
+                    className="flex-1 h-11 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold shadow-lg shadow-emerald-500/20 transition-all duration-300"
+                  >
+                    <IconDownload className="h-4 w-4 mr-1.5" />
+                    Struk
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

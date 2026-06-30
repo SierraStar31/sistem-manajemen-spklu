@@ -9,12 +9,16 @@ import {
   IconHistory,
   IconLogout,
   IconQrcode,
+  IconCoin,
 } from "@tabler/icons-react";
+import { useLanguage } from "@/app/providers";
+import { t } from "@/lib/i18n";
 
-const sidebarMenu = [
-  { label: "Dashboard", href: "/user/dashboard", icon: IconBolt },
-  { label: "Reservasi", href: "/user/reservasi", icon: IconQrcode },
-  { label: "Riwayat", href: "/user/riwayat", icon: IconHistory },
+const sidebarMenuItems = [
+  { labelKey: "dashboard" as const, href: "/user/dashboard", icon: IconBolt },
+  { labelKey: "reservasi" as const, href: "/user/reservasi", icon: IconQrcode },
+  { labelKey: "riwayat" as const, href: "/user/riwayat", icon: IconHistory },
+  { labelKey: "topupSaldo" as const, href: "/user/topup", icon: IconCoin },
 ];
 
 interface UserData {
@@ -35,8 +39,14 @@ function getUserData(): UserData | null {
 export default function UserLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { locale } = useLanguage();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [ready, setReady] = useState(false);
+
+  const sidebarMenu = sidebarMenuItems.map((item) => ({
+    ...item,
+    label: t(locale, item.labelKey),
+  }));
 
   const refreshUserData = useCallback(() => {
     const data = getUserData();
@@ -164,9 +174,8 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
                 className="flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl text-[10px] font-medium text-slate-400 transition-all duration-200"
               >
                 <IconLogout className="h-5 w-5" />
-                Keluar
-              </Link>
-            </div>
+                {t(locale, "keluar")}
+              </Link>            </div>
           </div>
         </nav>
       )}
