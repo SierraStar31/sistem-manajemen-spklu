@@ -25,6 +25,7 @@ interface UserData {
   type: "signin" | "signup" | "admin";
   nama: string;
   email: string;
+  foto?: string;
 }
 
 function getUserData(): UserData | null {
@@ -122,8 +123,12 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
 
               <div className="mt-auto border-t border-white/40 pt-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 text-white shadow-lg shadow-emerald-500/20 flex-shrink-0">
-                    <IconUser className="h-4.5 w-4.5" />
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 text-white shadow-lg shadow-emerald-500/20 flex-shrink-0 overflow-hidden">
+                    {userData?.foto ? (
+                      <img src={userData.foto} alt="Foto Profil" className="h-full w-full object-cover" />
+                    ) : (
+                      <IconUser className="h-4.5 w-4.5" />
+                    )}
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-slate-900 break-words">{userData?.nama || "User"}</p>
