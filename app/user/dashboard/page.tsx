@@ -16,7 +16,6 @@ import {
   IconSettings,
   IconBell,
   IconLock,
-  IconLanguage,
   IconEdit,
   IconAlertCircle,
   IconCamera,
@@ -108,11 +107,9 @@ export default function UserDashboardPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [data, setData] = useState(defaultData);
   const [platError, setPlatError] = useState("");
-  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const [photoMode, setPhotoMode] = useState<"upload" | "url">("upload");
   const [photoUrl, setPhotoUrl] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const langRef = useRef<HTMLDivElement>(null);
 
   const {
     formState: {},
@@ -142,20 +139,6 @@ export default function UserDashboardPage() {
         saldo: parsed.saldo ?? defaultData.saldo,
       });
     }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("neoncharge_user", JSON.stringify(data));
-  }, [data]);
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (langRef.current && !langRef.current.contains(e.target as Node)) {
-        setLangDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const validatePlat = (value: string) => {
@@ -589,64 +572,6 @@ export default function UserDashboardPage() {
               </div>
             </div>
             <Switch />
-          </div>
-
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <IconLanguage className="h-5 w-5 text-slate-400" />
-              <div>
-                <p className="text-sm font-medium text-slate-900">
-                  {t(locale, "bahasa")}
-                </p>
-                <p className="text-xs text-slate-400">
-                  {locale === "id" ? "Bahasa Indonesia" : "English"}
-                </p>
-              </div>
-            </div>
-            <div ref={langRef} className="relative">
-              <button
-                onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-                className="h-9 px-4 rounded-xl border border-slate-200/80 bg-white/80 backdrop-blur-xl text-sm font-medium text-slate-700 hover:bg-white hover:border-slate-300 transition-all duration-200 flex items-center gap-2"
-              >
-                <IconLanguage className="h-4 w-4 text-slate-400" />
-                {locale.toUpperCase()}
-                <svg
-                  className={`h-3 w-3 text-slate-400 transition-transform ${langDropdownOpen ? "rotate-180" : ""}`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </button>
-              {langDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-40 rounded-xl border border-white/60 bg-white/90 backdrop-blur-xl shadow-[0_8px_40px_-8px_rgba(0,0,0,0.1)] overflow-hidden z-50">
-                  <button
-                    onClick={() => {
-                      setLocale("id");
-                      setLangDropdownOpen(false);
-                    }}
-                    className={`w-full px-4 py-2.5 text-left text-sm font-medium transition-colors ${locale === "id" ? "bg-emerald-50 text-emerald-700" : "text-slate-700 hover:bg-slate-50"}`}
-                  >
-                    Bahasa Indonesia
-                  </button>
-                  <button
-                    onClick={() => {
-                      setLocale("en");
-                      setLangDropdownOpen(false);
-                    }}
-                    className={`w-full px-4 py-2.5 text-left text-sm font-medium transition-colors ${locale === "en" ? "bg-emerald-50 text-emerald-700" : "text-slate-700 hover:bg-slate-50"}`}
-                  >
-                    English
-                  </button>
-                </div>
-              )}
-            </div>
           </div>
         </CardContent>
       </Card>

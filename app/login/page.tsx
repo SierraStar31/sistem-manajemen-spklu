@@ -77,6 +77,14 @@ export default function LoginPage() {
       }));
       router.push("/admin/dashboard");
     } else {
+      const existing = localStorage.getItem("neoncharge_user");
+      if (existing) {
+        const parsed = JSON.parse(existing);
+        if (parsed.email === data.email && parsed.type === "signup") {
+          router.push("/user/dashboard");
+          return;
+        }
+      }
       localStorage.setItem("neoncharge_user", JSON.stringify({
         type: "signin",
         nama: "Andi Pratama",
@@ -96,6 +104,14 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     setIsLoading(true);
     await new Promise((resolve) => setTimeout(resolve, 800));
+    const existing = localStorage.getItem("neoncharge_user");
+    if (existing) {
+      const parsed = JSON.parse(existing);
+      if (parsed.type === "signup") {
+        router.push("/user/dashboard");
+        return;
+      }
+    }
     localStorage.setItem("neoncharge_user", JSON.stringify({
       type: "signin",
       nama: "Andi Pratama",
